@@ -6,6 +6,7 @@ const noteSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
     description: {
       type: String,
       required: true,
@@ -16,4 +17,6 @@ const noteSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Note", noteSchema);
+const Note = mongoose.model("Note", noteSchema);
+
+module.exports = Note;
