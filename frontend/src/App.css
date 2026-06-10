@@ -1,34 +1,52 @@
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6f9;
+  margin: 0;
+  padding: 20px;
 }
 
-body{
-  background:#111827;
-  color:white;
-  font-family:Arial, sans-serif;
+.container {
+  max-width: 800px;
+  margin: auto;
 }
 
-.container{
-  width:90%;
-  max-width:800px;
-  margin:40px auto;
+h1 {
+  text-align: center;
 }
 
-h1{
-  text-align:center;
-  margin-bottom:30px;
+input,
+textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
 }
 
-.note-card{
-  background:#1f2937;
-  padding:20px;
-  border-radius:12px;
-  margin-bottom:15px;
-  box-shadow:0 0 10px rgba(0,0,0,0.3);
+textarea {
+  height: 100px;
+  resize: none;
 }
 
-.note-card h2{
-  margin-bottom:10px;
+button {
+  margin-top: 10px;
+  padding: 10px 20px;
+  border: none;
+  background: #2563eb;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.note-card {
+  background: white;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
