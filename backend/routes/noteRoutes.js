@@ -34,6 +34,28 @@ router.get("/", async (req, res) => {
   }
 });
 
+// UPDATE NOTE
+router.put("/:id", async (req, res) => {
+  try {
+    const updatedNote = await Note.findByIdAndUpdate(
+      req.params.id,
+      {
+        title: req.body.title,
+        description: req.body.description,
+      },
+      {
+        new: true,
+      }
+    );
+
+    res.json(updatedNote);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
+});
+
 // DELETE NOTE
 router.delete("/:id", async (req, res) => {
   try {
