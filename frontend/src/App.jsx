@@ -6,7 +6,9 @@ function App() {
   const [notes, setNotes] = useState([]);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("Personal");
   const [editId, setEditId] = useState(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     fetchNotes();
@@ -37,6 +39,7 @@ function App() {
           {
             title,
             description,
+            category,
           }
         );
 
@@ -47,12 +50,14 @@ function App() {
           {
             title,
             description,
+            category,
           }
         );
       }
 
       setTitle("");
       setDescription("");
+      setCategory("Personal");
 
       fetchNotes();
     } catch (error) {
@@ -75,12 +80,29 @@ function App() {
   const editNote = (note) => {
     setTitle(note.title);
     setDescription(note.description);
+    setCategory(note.category || "Personal");
     setEditId(note._id);
   };
 
+  const filteredNotes = notes.filter((note) =>
+    note.title
+      .toLowerCase()
+      .includes(search.toLowerCase())
+  );
+
   return (
-    <div>
+    <div className="container">
       <h1>SmartNotes</h1>
+
+      <input
+        type="text"
+        placeholder="Search Notes..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+      />
+
+      <br />
+      <br />
 
       <input
         type="text"
@@ -101,6 +123,19 @@ function App() {
       <br />
       <br />
 
+      <select
+        value={category}
+        onChange={(e) => setCategory(e.target.value)}
+      >
+        <option value="Study">Study</option>
+        <option value="Work">Work</option>
+        <option value="Personal">Personal</option>
+        <option value="Ideas">Ideas</option>
+      </select>
+
+      <br />
+      <br />
+
       <button onClick={addNote}>
         {editId ? "Update Note" : "Add Note"}
       </button>
@@ -109,20 +144,40 @@ function App() {
 
       <h2>Total Notes: {notes.length}</h2>
 
-      {notes.map((note) => (
+      {filteredNotes.length === 0 && (
+        <p>No Notes Found</p>
+      )}
+
+      {filteredNotes.map((note) => (
         <div className="note-card" key={note._id}>
           <h3>{note.title}</h3>
+
+          <p>
+            <strong>Category:</strong>{" "}
+            {note.category || "Personal"}
+          </p>
+
           <p>{note.description}</p>
+
+          <small>
+            Created:{" "}
+            {new Date(
+              note.createdAt
+            ).toLocaleDateString()}
+          </small>
+
+          <br />
+          <br />
 
           <button onClick={() => editNote(note)}>
             Edit
           </button>
 
-          <button onClick={() => deleteNote(note._id)}>
+          <button
+            onClick={() => deleteNote(note._id)}
+          >
             Delete
           </button>
-
-          <hr />
         </div>
       ))}
     </div>

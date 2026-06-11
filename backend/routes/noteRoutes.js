@@ -9,6 +9,7 @@ router.post("/", async (req, res) => {
     const note = new Note({
       title: req.body.title,
       description: req.body.description,
+      category: req.body.category,
     });
 
     const saved = await note.save();
@@ -42,6 +43,7 @@ router.put("/:id", async (req, res) => {
       {
         title: req.body.title,
         description: req.body.description,
+        category: req.body.category,
       },
       {
         new: true,
@@ -72,4 +74,3 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
-
