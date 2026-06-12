@@ -10,6 +10,7 @@ router.post("/", async (req, res) => {
       title: req.body.title,
       description: req.body.description,
       category: req.body.category,
+      pinned: req.body.pinned || false,
     });
 
     const saved = await note.save();
@@ -44,6 +45,7 @@ router.put("/:id", async (req, res) => {
         title: req.body.title,
         description: req.body.description,
         category: req.body.category,
+        pinned: req.body.pinned,
       },
       {
         new: true,

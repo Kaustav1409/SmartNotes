@@ -11,6 +11,7 @@ function App() {
   const [sortBy, setSortBy] = useState("Newest");
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
+  const [darkMode, setDarkMode] = useState(false);
 
   useEffect(() => {
     fetchNotes();
@@ -124,11 +125,30 @@ function App() {
     });
 
   return (
-  <div className="container">
+  <div
+  className={`container ${
+    darkMode ? "dark-mode" : ""
+  }`}
+>
     <div className="hero">
-      <h1>SmartNotes</h1>
-      <p>Organize your ideas efficiently 🚀</p>
-    </div>
+  <h1>SmartNotes</h1>
+
+  <p>
+    Organize your ideas efficiently 🚀
+  </p>
+
+  <br />
+
+  <button
+    onClick={() =>
+      setDarkMode(!darkMode)
+    }
+  >
+    {darkMode
+      ? "☀️ Light Mode"
+      : "🌙 Dark Mode"}
+  </button>
+</div>
 
     <div className="stats">
       <div className="stat-card">

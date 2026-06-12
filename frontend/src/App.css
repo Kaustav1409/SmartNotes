@@ -296,3 +296,57 @@ p {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+/* DARK MODE */
+
+.dark-mode {
+  background: #0f172a;
+  min-height: 100vh;
+  padding: 20px;
+  border-radius: 24px;
+}
+
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode h3 {
+  color: white;
+}
+
+.dark-mode p,
+.dark-mode small {
+  color: #cbd5e1;
+}
+
+.dark-mode .note-card,
+.dark-mode .stat-card,
+.dark-mode .form-section,
+.dark-mode .filter-section {
+  background: rgba(30, 41, 59, 0.95);
+  border: 1px solid #334155;
+}
+
+.dark-mode input,
+.dark-mode textarea,
+.dark-mode select {
+  background: #1e293b;
+  color: white;
+  border: 1px solid #334155;
+}
+
+.dark-mode input::placeholder,
+.dark-mode textarea::placeholder {
+  color: #94a3b8;
+}
+
+.dark-mode .category-badge {
+  background: #1d4ed8;
+  color: white;
+}
+
+.dark-mode .hero p {
+  color: #cbd5e1;
+}
+
+.dark-mode .stat-card p {
+  color: #cbd5e1;
+}
