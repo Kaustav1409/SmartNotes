@@ -20,7 +20,7 @@ function App() {
   const fetchNotes = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/notes"
+        "https://smartnotes-backend-kwqj.onrender.com/api/notes"
       );
 
       setNotes(response.data);
@@ -38,7 +38,7 @@ function App() {
     try {
       if (editId) {
         await axios.put(
-          `http://localhost:5000/api/notes/${editId}`,
+          `https://smartnotes-backend-kwqj.onrender.com/api/notes/${editId}`,
           {
             title,
             description,
@@ -49,7 +49,7 @@ function App() {
         setEditId(null);
       } else {
         await axios.post(
-          "http://localhost:5000/api/notes",
+          "https://smartnotes-backend-kwqj.onrender.com/api/notes",
           {
             title,
             description,
@@ -71,7 +71,7 @@ function App() {
   const deleteNote = async (id) => {
     try {
       await axios.delete(
-        `http://localhost:5000/api/notes/${id}`
+        `https://smartnotes-backend-kwqj.onrender.com/api/notes/${id}`
       );
 
       fetchNotes();
