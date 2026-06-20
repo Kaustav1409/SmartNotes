@@ -9,8 +9,15 @@ const authRoutes = require("./routes/authRoutes");
 
 dotenv.config();
 
-console.log("JWT =", process.env.JWT_SECRET);
-console.log("MONGO =", process.env.MONGO_URI ? "FOUND" : "NOT FOUND");
+console.log(
+  "JWT ON RENDER =",
+  process.env.JWT_SECRET || "UNDEFINED"
+);
+
+console.log(
+  "MONGO ON RENDER =",
+  process.env.MONGO_URI ? "FOUND" : "NOT FOUND"
+);
 
 connectDB();
 
