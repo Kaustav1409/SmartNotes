@@ -13,15 +13,38 @@ function App() {
   const [search, setSearch] = useState("");
   const [darkMode, setDarkMode] = useState(false);
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
+  const [user, setUser] = useState(null);
+const [isLogin, setIsLogin] = useState(true);
 
-  const fetchNotes = async () => {
+const [name, setName] = useState("");
+const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+
+  useEffect(() => {
+  const savedUser =
+    localStorage.getItem("user");
+
+  const savedToken =
+    localStorage.getItem("token");
+
+  if (savedUser && savedToken) {
+    setUser(JSON.parse(savedUser));
+    fetchNotes(savedToken);
+  }
+}, []);
+
+  const fetchNotes = async (
+  token = localStorage.getItem("token")
+) => {
     try {
       const response = await axios.get(
-        "https://smartnotes-backend-kwqj.onrender.com/api/notes"
-      );
+  "https://smartnotes-backend-kwqj.onrender.com/api/notes",
+  {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }
+);
 
       setNotes(response.data);
     } catch (error) {

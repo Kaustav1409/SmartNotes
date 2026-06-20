@@ -2,11 +2,13 @@ const express = require("express");
 const router = express.Router();
 
 const Note = require("../models/Note");
+const protect = require("../middleware/authMiddleware");
 
 // CREATE NOTE
-router.post("/", async (req, res) => {
+router.post("/", protect, async (req, res) => {
   try {
     const note = new Note({
+      user: req.user.id,
       title: req.body.title,
       description: req.body.description,
       category: req.body.category,
@@ -23,10 +25,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET ALL NOTES
-router.get("/", async (req, res) => {
+// GET USER NOTES
+router.get("/", protect, async (req, res) => {
   try {
-    const notes = await Note.find();
+    const notes = await Note.find({
+      user: req.user.id,
+    });
 
     res.json(notes);
   } catch (err) {
@@ -37,20 +41,25 @@ router.get("/", async (req, res) => {
 });
 
 // UPDATE NOTE
-router.put("/:id", async (req, res) => {
+router.put("/:id", protect, async (req, res) => {
   try {
-    const updatedNote = await Note.findByIdAndUpdate(
-      req.params.id,
-      {
-        title: req.body.title,
-        description: req.body.description,
-        category: req.body.category,
-        pinned: req.body.pinned,
-      },
-      {
-        new: true,
-      }
-    );
+    const updatedNote =
+      await Note.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          user: req.user.id,
+        },
+        {
+          title: req.body.title,
+          description:
+            req.body.description,
+          category: req.body.category,
+          pinned: req.body.pinned,
+        },
+        {
+          new: true,
+        }
+      );
 
     res.json(updatedNote);
   } catch (err) {
@@ -61,18 +70,25 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE NOTE
-router.delete("/:id", async (req, res) => {
-  try {
-    await Note.findByIdAndDelete(req.params.id);
+router.delete(
+  "/:id",
+  protect,
+  async (req, res) => {
+    try {
+      await Note.findOneAndDelete({
+        _id: req.params.id,
+        user: req.user.id,
+      });
 
-    res.json({
-      message: "Note deleted",
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+      res.json({
+        message: "Note deleted",
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.message,
+      });
+    }
   }
-});
+);
 
 module.exports = router;
