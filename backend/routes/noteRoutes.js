@@ -1,94 +1,128 @@
 const express = require("express");
 const router = express.Router();
-
 const Note = require("../models/Note");
 const protect = require("../middleware/authMiddleware");
 
-// CREATE NOTE
+/*
+=================================
+CREATE NOTE
+POST /api/notes
+=================================
+*/
 router.post("/", protect, async (req, res) => {
   try {
+    const { title, description, category, pinned } = req.body;
+
+    // Validate required fields
+    if (!title || !title.trim()) {
+      return res.status(400).json({ message: "Title is required" });
+    }
+    if (!description || !description.trim()) {
+      return res.status(400).json({ message: "Description is required" });
+    }
+
     const note = new Note({
       user: req.user.id,
-      title: req.body.title,
-      description: req.body.description,
-      category: req.body.category,
-      pinned: req.body.pinned || false,
+      title: title.trim(),
+      description: description.trim(),
+      category: category || "Personal",
+      pinned: pinned || false,
     });
 
-    const saved = await note.save();
-
-    res.status(201).json(saved);
+    const savedNote = await note.save();
+    res.status(201).json(savedNote);
   } catch (err) {
-    res.status(400).json({
-      message: err.message,
-    });
+    console.error("Create note error:", err.message);
+    res.status(400).json({ message: err.message });
   }
 });
 
-// GET USER NOTES
+/*
+=================================
+GET USER'S NOTES
+GET /api/notes
+=================================
+*/
 router.get("/", protect, async (req, res) => {
   try {
-    const notes = await Note.find({
-      user: req.user.id,
+    // Return pinned notes first, then by newest
+    const notes = await Note.find({ user: req.user.id }).sort({
+      pinned: -1,
+      createdAt: -1,
     });
 
-    res.json(notes);
+    res.status(200).json(notes);
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+    console.error("Fetch notes error:", err.message);
+    res.status(500).json({ message: "Failed to fetch notes" });
   }
 });
 
-// UPDATE NOTE
+/*
+=================================
+UPDATE NOTE
+PUT /api/notes/:id
+=================================
+*/
 router.put("/:id", protect, async (req, res) => {
   try {
-    const updatedNote =
-      await Note.findOneAndUpdate(
-        {
-          _id: req.params.id,
-          user: req.user.id,
-        },
-        {
-          title: req.body.title,
-          description:
-            req.body.description,
-          category: req.body.category,
-          pinned: req.body.pinned,
-        },
-        {
-          new: true,
-        }
-      );
+    const { title, description, category, pinned } = req.body;
 
-    res.json(updatedNote);
+    // Build update object — only include provided fields
+    const updateFields = {};
+    if (title !== undefined) updateFields.title = title.trim();
+    if (description !== undefined) updateFields.description = description.trim();
+    if (category !== undefined) updateFields.category = category;
+    if (pinned !== undefined) updateFields.pinned = pinned;
+
+    const updatedNote = await Note.findOneAndUpdate(
+      {
+        _id: req.params.id,
+        user: req.user.id, // Ensures user can only edit their own notes
+      },
+      updateFields,
+      { new: true, runValidators: true }
+    );
+
+    // FIX: Return 404 instead of 200 with null when note not found
+    if (!updatedNote) {
+      return res.status(404).json({
+        message: "Note not found or you are not authorized to edit it",
+      });
+    }
+
+    res.status(200).json(updatedNote);
   } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
+    console.error("Update note error:", err.message);
+    res.status(500).json({ message: err.message });
   }
 });
 
-// DELETE NOTE
-router.delete(
-  "/:id",
-  protect,
-  async (req, res) => {
-    try {
-      await Note.findOneAndDelete({
-        _id: req.params.id,
-        user: req.user.id,
-      });
+/*
+=================================
+DELETE NOTE
+DELETE /api/notes/:id
+=================================
+*/
+router.delete("/:id", protect, async (req, res) => {
+  try {
+    const deletedNote = await Note.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.id, // Ensures user can only delete their own notes
+    });
 
-      res.json({
-        message: "Note deleted",
-      });
-    } catch (err) {
-      res.status(500).json({
-        message: err.message,
+    // FIX: Return 404 when note doesn't exist
+    if (!deletedNote) {
+      return res.status(404).json({
+        message: "Note not found or you are not authorized to delete it",
       });
     }
+
+    res.status(200).json({ message: "Note deleted successfully" });
+  } catch (err) {
+    console.error("Delete note error:", err.message);
+    res.status(500).json({ message: err.message });
   }
-);
+});
 
 module.exports = router;
